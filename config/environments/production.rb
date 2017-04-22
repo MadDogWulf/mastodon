@@ -43,7 +43,7 @@ Rails.application.configure do
   config.log_tags = [:request_id]
 
   # Use a different logger for distributed setups.
-  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+  #config.logger = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root}/log/production.log"))
 
   # Parse and split the REDIS_URL if passed (used with hosting platforms such as Heroku).
   # Set ENV variables because they are used elsewhere.
@@ -62,7 +62,7 @@ Rails.application.configure do
     port: ENV.fetch('REDIS_PORT') { 6379 },
     password: ENV.fetch('REDIS_PASSWORD') { false },
     db: ENV.fetch('REDIS_DB') { 0 },
-    namespace: 'cache',
+    namespace: 'dev_glitch_social_cache',
     expires_in: 10.minutes,
   }
 
@@ -112,9 +112,12 @@ Rails.application.configure do
   end
 
   config.action_dispatch.default_headers = {
-    'Server'                 => 'Mastodon',
-    'X-Frame-Options'        => 'DENY',
-    'X-Content-Type-Options' => 'nosniff',
-    'X-XSS-Protection'       => '1; mode=block',
+    'Server'                  => 'Mastodon',
+    'X-Frame-Options'         => 'DENY',
+    'X-Content-Type-Options'  => 'nosniff',
+    'X-XSS-Protection'        => '1; mode=block',
+    'Content-Security-Policy' => "frame-ancestors 'none'; object-src 'none'; script-src 'self' https://dev-static.glitch.social 'unsafe-inline'; base-uri 'none';" , 
+    'Referrer-Policy'         => 'no-referrer, strict-origin-when-cross-origin',
+    'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload'
   }
 end

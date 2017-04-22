@@ -54,12 +54,14 @@ if (cluster.isMaster) {
   const pgPool = new pg.Pool(pgConfigs[env])
   const server = http.createServer(app)
   const wss    = new WebSocket.Server({ server })
-
+  
   const redisClient = redis.createClient({
     host:     process.env.REDIS_HOST     || '127.0.0.1',
     port:     process.env.REDIS_PORT     || 6379,
+    prefix:   'dev_glitch_social:',
     password: process.env.REDIS_PASSWORD
   })
+
 
   const subs = {}
 
@@ -71,11 +73,10 @@ if (cluster.isMaster) {
     if (!callbacks) {
       return
     }
-
     callbacks.forEach(callback => callback(message))
   })
 
-  redisClient.psubscribe('timeline:*')
+  redisClient.psubscribe('dev_glitch_social:timeline:*')
 
   const subscribe = (channel, callback) => {
     log.silly(`Adding listener for ${channel}`)
@@ -208,8 +209,8 @@ if (cluster.isMaster) {
       }
     }
 
-    subscribe(id, listener)
-    attachCloseHandler(id, listener)
+    subscribe('dev_glitch_social:' + id, listener)
+    attachCloseHandler('dev_glitch_social:' + id, listener)
   }
 
   // Setup stream output to HTTP

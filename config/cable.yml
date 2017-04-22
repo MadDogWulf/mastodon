@@ -8,3 +8,4 @@ test:
 production:
   adapter: redis
   url: redis://<%= ENV['REDIS_PASSWORD'] ? ':' + ENV['REDIS_PASSWORD'] + '@' : '' %><%= ENV['REDIS_HOST'] || 'localhost' %>:<%= ENV['REDIS_PORT'] || 6379 %>/1
+  channel_prefix: dev_glitch_social
